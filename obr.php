@@ -28,3 +28,6 @@ if(!empty($getId['id'])){
 mysqli_close($conn);
 header('Location: /weather/index.php', true, 301);
 exit;
+
+
+

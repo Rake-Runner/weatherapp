@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,21 +14,21 @@ session_start();
 $cities = json_decode(file_get_contents("json/citylist.json"));
 foreach($cities as $k => $v){
     $mass[] = $v->name.' ';
-}
+    }
 #CONNECT ####################################################################################################################
 $servername = "localhost";
 $username = "root";
 $password = "";
 $conn = new mysqli($servername, $username, $password);
-if ($conn->connect_error) {
+if($conn->connect_error){
     die("Connection failed: " . $conn->connect_error.'<br>');
-}
-#echo "Connected successfully".'<br>';
+    }
+    #echo "Connected successfully".'<br>';
 #CREATE DATABASE ####################################################################################################################
 $sql = "CREATE DATABASE weatherone";
-if (mysqli_query($conn, $sql)) {
+if(mysqli_query($conn, $sql)){
     #echo "Database created successfully".'<br>';
-} else {
+}else{
     #echo "Error creating database: " . mysqli_error($conn).'<br>';
 }
 #CREATE TABLE ####################################################################################################################
@@ -42,12 +42,11 @@ $sql2 = "CREATE TABLE weatherdata (
     lon VARCHAR(250),
     lat VARCHAR(250)
     ) CHARACTER SET utf8 COLLATE utf8_general_ci;";
-    if (mysqli_query($conn, $sql2)) {
+if(mysqli_query($conn, $sql2)){
         #echo "Table Weather created successfully".'<br>';
-    } else {
+    }else{
         #echo "Error creating table: " . mysqli_error($conn).'<br>';
     }
-    
 #INSERTING DATA ####################################################################################################################
 ini_set('max_execution_time', 900);
 // foreach($cities as $k => $v){
@@ -62,25 +61,21 @@ ini_set('max_execution_time', 900);
 //         echo "Error: " . $sql3 . "<br>" . mysqli_error($conn);
 //     }    
 // }
-mysqli_close($conn);
-?>
+mysqli_close($conn); ?>
+
 <section id="wrapper">
     <h1>Weather app</h1>
     <span>City:</span>
     <form action="obr.php" method="post">
         <input type="search" name="city">
     </form>
+
 <?php
 if(!empty($_SESSION['thecity'])){
     #echo $_SESSION['thecity'];
-    ##################################################################################################################################
     $apiKey = "da2e7f1d6dfb972bf0498f308b1c6dcc";
     $cityId = $_SESSION['thecity'];
     $url = "http://api.openweathermap.org/data/2.5/weather?id=" . $cityId . "&units=metric&lang=en&units=metric&APPID=" . $apiKey;
-
-    #$url = "https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=da2e7f1d6dfb972bf0498f308b1c6dcc";
-    #api.openweathermap.org/data/2.5/weather?q={city name}&appid={your api key}
-    #da2e7f1d6dfb972bf0498f308b1c6dcc
 
 $contents = file_get_contents($url);
 $weather=json_decode($contents);
@@ -98,7 +93,7 @@ $sunsetD = $weather->sys->sunset;
 
 $today = 'Today: '.date("d.m.y, H:i");
 $cityname = 'City: '.$weather->name;
-# ПРОВЕРКА: ####################################################################################################################
+# ВЫВОД: ####################################################################################################################
 echo ' '.
 $today."<br />".
 $cityname."<br />".
@@ -109,17 +104,15 @@ $wind."<br />".
 $clouds."<br />".
 $humidity."<br />".
 $sunrise."<br />".
-$sunset."<br />"."<br />";
-?>
+$sunset."<br />"."<br />"; ?>
+
 </section>
+
 <?php
-#################################################################################################################################
 }else{
     echo 'X';
 }
-
-
-#table 2 SPY #################################################################################################################################
+#TABLE 2 SPY #################################################################################################################################
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 $sql4 = "CREATE TABLE weatherspy (
     urlz VARCHAR(500) NOT NULL,
@@ -137,9 +130,7 @@ $sql4 = "CREATE TABLE weatherspy (
     }
 
     ini_set('max_execution_time', 900);
-#table 2 SPY insert #################################################################################################################################
-    //$city = addslashes($cityname);
-    //echo 'Session: '. $cityname;  
+#TABLE 2 SPY INSERT DATA #################################################################################################################################
     $cityspy = $weather->name;  
     $sql6 = "SELECT country, lon, lat FROM weatherdata WHERE city='$cityspy'";
     $result1 = mysqli_query($conn, $sql6);
@@ -148,23 +139,16 @@ $sql4 = "CREATE TABLE weatherspy (
     $spyLon = $getspy['lon'];
     $spyLat = $getspy['lat'];
     $urlTime = date('H:i');
-
-
     $timestampz = time();
     $urlcatch = $url;
     $sql5 = "INSERT INTO weatherspy (urlz, timez, timestampformat, city, country, lon, lat)
        VALUES ('$urlcatch', '$urlTime', '$timestampz','$cityspy', '$spyCountry', '$spyLon', '$spyLat')";
-    if (mysqli_query($conn, $sql5)){
+    if(mysqli_query($conn, $sql5)){
         #echo 'V';
     }else{ 
         #echo "Error: " . $sql5 . "<br>" . mysqli_error($conn);
     }    
-
-
     mysqli_close($conn);
-
-   
-
 ?>
    <script src="js/main.js"></script> 
    <script src="js/jquery-3.4.1.min.js"></script>
